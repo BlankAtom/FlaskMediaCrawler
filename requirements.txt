@@ -3,10 +3,13 @@ Pillow==9.5.0
 playwright==1.42.0
 tenacity==8.2.2
 PyExecJS==1.5.1
-opencv-python
+opencv-python~=4.9.0.80
 aiomysql==0.2.0
 redis~=4.6.0
 pydantic==2.5.2
 aiofiles~=23.2.1
 fastapi==0.110.2
 uvicorn==0.29.0
+
+numpy~=1.26.4
+Flask~=3.0.3

@@ -198,9 +198,10 @@ class XiaoHongShuClient(AbstractApiClient):
         Returns:
 
         """
-        data = {"source_note_id": note_id}
+        data = {"source_note_id": note_id, "image_formats": ["jpg", "webp", "avif"]}
         uri = "/api/sns/web/v1/feed"
         res = await self.post(uri, data)
+        utils.logger.info(res)
         if res and res.get("items"):
             res_dict: Dict = res["items"][0]["note_card"]
             return res_dict

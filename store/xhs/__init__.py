@@ -18,25 +18,31 @@ class XhsStoreFactory:
     }
 
     @staticmethod
-    def create_store() -> AbstractStore:
+    def create_store(id: str) -> AbstractStore:
         store_class = XhsStoreFactory.STORES.get(config.SAVE_DATA_OPTION)
         if not store_class:
             raise ValueError("[XhsStoreFactory.create_store] Invalid save option only supported csv or db or json ...")
-        return store_class()
+        return store_class(id=id)
 
 
-async def update_xhs_note(note_item: Dict):
+async def update_xhs_note(note_item: Dict, id: str):
     note_id = note_item.get("note_id")
     user_info = note_item.get("user", {})
     interact_info = note_item.get("interact_info", {})
     image_list: List[Dict] = note_item.get("image_list", [])
     tag_list: List[Dict] = note_item.get("tag_list", [])
 
+    # print(image_list)
+
     video_url = ''
     if note_item.get('type') == 'video':
         videos = note_item.get('video').get('media').get('stream').get('h264')
         if type(videos).__name__ == 'list':
             video_url = ','.join([v.get('master_url') for v in videos])
+
+    base_image_url = 'https://sns-img-bd.xhscdn.com/'
+
+    # for img in image_list
 
     local_db_item = {
         "note_id": note_item.get("note_id"),
@@ -54,13 +60,13 @@ async def update_xhs_note(note_item: Dict):
         "comment_count": interact_info.get("comment_count"),
         "share_count": interact_info.get("share_count"),
         "ip_location": note_item.get("ip_location", ""),
-        "image_list": ','.join([img.get('url', '') for img in image_list]),
+        "image_list": [base_image_url+img.get('url_pre').split('!')[-2].split('/')[-1] for img in image_list],
         "tag_list": ','.join([tag.get('name', '') for tag in tag_list if tag.get('type') == 'topic']),
         "last_modify_ts": utils.get_current_timestamp(),
         "note_url": f"https://www.xiaohongshu.com/explore/{note_id}"
     }
     utils.logger.info(f"[store.xhs.update_xhs_note] xhs note: {local_db_item}")
-    await XhsStoreFactory.create_store().store_content(local_db_item)
+    await XhsStoreFactory.create_store(id).store_content(local_db_item)
 
 
 async def batch_update_xhs_note_comments(note_id: str, comments: List[Dict]):

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Input Form</title>
+</head>
+<body>
+    <form method="POST">
+        <textarea name="input_field" rows="10" cols="30" placeholder="Enter something..."></textarea>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>

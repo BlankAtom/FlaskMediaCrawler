@@ -29,6 +29,8 @@ class XiaoHongShuCrawler(AbstractCrawler):
     browser_context: BrowserContext
 
     def __init__(self) -> None:
+        super().__init__()
+        print(self.id)
         self.index_url = "https://www.xiaohongshu.com"
         self.user_agent = utils.get_user_agent()
 
@@ -128,7 +130,7 @@ class XiaoHongShuCrawler(AbstractCrawler):
                     note_details = await asyncio.gather(*task_list)
                     for note_detail in note_details:
                         if note_detail is not None:
-                            await xhs_store.update_xhs_note(note_detail)
+                            await xhs_store.update_xhs_note(note_detail, self.get_id())
                             note_id_list.append(note_detail.get("note_id"))
                     page += 1
                     utils.logger.info(f"[XiaoHongShuCrawler.search] Note details: {note_details}")
@@ -168,7 +170,7 @@ class XiaoHongShuCrawler(AbstractCrawler):
         note_details = await asyncio.gather(*task_list)
         for note_detail in note_details:
             if note_detail is not None:
-                await xhs_store.update_xhs_note(note_detail)
+                await xhs_store.update_xhs_note(note_detail, self.get_id())
 
     async def get_specified_notes(self):
         """Get the information and comments of the specified post"""
@@ -179,7 +181,7 @@ class XiaoHongShuCrawler(AbstractCrawler):
         note_details = await asyncio.gather(*task_list)
         for note_detail in note_details:
             if note_detail is not None:
-                await xhs_store.update_xhs_note(note_detail)
+                await xhs_store.update_xhs_note(note_detail, self.id)
         await self.batch_get_note_comments(config.XHS_SPECIFIED_ID_LIST)
 
     async def get_note_detail(self, note_id: str, semaphore: asyncio.Semaphore) -> Optional[Dict]:

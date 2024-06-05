@@ -19,12 +19,13 @@ IP_PROXY_PROVIDER_NAME = "kuaidaili"
 # 设置False会打开一个浏览器
 # 小红书如果一直扫码登录不通过，打开浏览器手动过一下滑动验证码
 # 抖音如果一直提示失败，打开浏览器看下是否扫码登录之后出现了手机号验证，如果出现了手动过一下再试。
-HEADLESS = False
+HEADLESS = True
 
 # 是否保存登录状态
 SAVE_LOGIN_STATE = True
 
 # 数据保存类型选项配置,支持三种类型：csv、db、json
+# SAVE_DATA_OPTION = "db"  # csv or db or json
 SAVE_DATA_OPTION = "json"  # csv or db or json
 
 # 用户浏览器缓存的浏览器文件配置
@@ -40,7 +41,7 @@ CRAWLER_MAX_NOTES_COUNT = 20
 MAX_CONCURRENCY_NUM = 4
 
 # 是否开启爬图片模式, 默认不开启爬图片
-ENABLE_GET_IMAGES = False
+ENABLE_GET_IMAGES = True
 
 # 是否开启爬评论模式, 默认不开启爬评论
 ENABLE_GET_COMMENTS = False
@@ -51,9 +52,9 @@ ENABLE_GET_SUB_COMMENTS = False
 
 # 指定小红书需要爬虫的笔记ID列表
 XHS_SPECIFIED_ID_LIST = [
-    "6422c2750000000027000d88",
-    "64ca1b73000000000b028dd2",
-    "630d5b85000000001203ab41",
+    "662e57b300000000040187c2",
+    # "64ca1b73000000000b028dd2",
+    # "630d5b85000000001203ab41",
     # ........................
 ]
 

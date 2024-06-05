@@ -163,7 +163,7 @@ class XhsDbStoreImplement(AbstractStore):
 class XhsJsonStoreImplement(AbstractStore):
     json_store_path: str = "data/xhs"
     lock = asyncio.Lock()
-    file_count:int=calculate_number_of_files(json_store_path)
+    file_count: int = calculate_number_of_files(json_store_path)
 
     def make_save_file_name(self, store_type: str) -> str:
         """
@@ -174,8 +174,9 @@ class XhsJsonStoreImplement(AbstractStore):
         Returns:
 
         """
+        # self.id
 
-        return f"{self.json_store_path}/{self.file_count}_{crawler_type_var.get()}_{store_type}_{utils.get_current_date()}.json"
+        return f"{self.json_store_path}/{self.id}_{crawler_type_var.get()}_{store_type}.json"
 
     async def save_data_to_json(self, save_item: Dict, store_type: str):
         """

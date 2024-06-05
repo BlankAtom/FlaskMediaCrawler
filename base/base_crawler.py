@@ -1,3 +1,4 @@
+import uuid
 from abc import ABC, abstractmethod
 from typing import Dict, Optional
 
@@ -5,6 +6,10 @@ from playwright.async_api import BrowserContext, BrowserType
 
 
 class AbstractCrawler(ABC):
+    def __init__(self):
+        self.id = uuid.uuid4().hex
+        print(self.id)
+
     @abstractmethod
     def init_config(self, platform: str, login_type: str, crawler_type: str, start_page: int, keyword: str):
         pass
@@ -21,6 +26,9 @@ class AbstractCrawler(ABC):
     async def launch_browser(self, chromium: BrowserType, playwright_proxy: Optional[Dict], user_agent: Optional[str],
                              headless: bool = True) -> BrowserContext:
         pass
+
+    def get_id(self):
+        return self.id
 
 
 class AbstractLogin(ABC):
@@ -42,6 +50,9 @@ class AbstractLogin(ABC):
 
 
 class AbstractStore(ABC):
+    def __init__(self, id: str):
+        self.id = id
+
     @abstractmethod
     async def store_content(self, content_item: Dict):
         pass
