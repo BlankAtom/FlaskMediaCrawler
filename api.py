@@ -141,7 +141,7 @@ def scan_temp():
 if __name__ == '__main__':
     print('Start Flask Server')
     s = sched.scheduler(timefunc=time.time, delayfunc=time.sleep)
-    s.enter(60 * 60, 1, )
+    s.enter(60 * 60, 1, scan_temp)
     app.run(host='0.0.0.0', debug=False, port=5000)
 
     # db.close()
