@@ -9,7 +9,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: browserless/chromium:latest
+      image: ghcr.io/browserless/base:latest
 
     permissions:
       packages: write
