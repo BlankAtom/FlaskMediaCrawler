@@ -1,5 +1,7 @@
 import os
 import re
+import sched
+import time
 from zipfile import ZipFile
 
 import aiofiles
@@ -14,6 +16,7 @@ from var import crawler_type_var
 
 app = Flask(__name__)
 app.secret_key = '68f2d2ee5b3c4482b78cf1bbd81324cb'
+
 
 
 # db.init_db()
@@ -128,8 +131,17 @@ def input_form():
     return render_template('input_form.html')
 
 
+def scan_temp():
+    for root, dirs, files in os.walk('temp'):
+        for file in files:
+            if os.path.getctime(os.path.join(root, file)) < time.time() - 60 * 60:
+                os.remove(os.path.join(root, file))
+
+
 if __name__ == '__main__':
     print('Start Flask Server')
+    s = sched.scheduler(timefunc=time.time, delayfunc=time.sleep)
+    s.enter(60 * 60, 1, )
     app.run(host='0.0.0.0', debug=False, port=5000)
 
     # db.close()
