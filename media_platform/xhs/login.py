@@ -10,7 +10,7 @@ from tenacity import (RetryError, retry, retry_if_result, stop_after_attempt,
 import config
 from base.base_crawler import AbstractLogin
 from cache.cache_factory import CacheFactory
-from tools import utils
+from tools import utils, crawler_util
 
 
 class XiaoHongShuLogin(AbstractLogin):
@@ -175,7 +175,7 @@ class XiaoHongShuLogin(AbstractLogin):
     async def login_by_cookies(self):
         """login xiaohongshu website by cookies"""
         utils.logger.info("[XiaoHongShuLogin.login_by_cookies] Begin login xiaohongshu by cookie ...")
-        for key, value in utils.convert_str_cookie_to_dict(self.cookie_str).items():
+        for key, value in crawler_util.convert_str_cookie_to_dict(self.cookie_str).items():
             if key != "web_session":  # only set web_session cookie attr
                 continue
             await self.browser_context.add_cookies([{

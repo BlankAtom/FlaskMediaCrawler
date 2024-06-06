@@ -1,9 +1,5 @@
 import logging
 
-from .crawler_util import *
-from .slider_util import *
-from .time_util import *
-
 
 def init_loging_config():
     level = logging.INFO

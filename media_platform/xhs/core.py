@@ -11,7 +11,7 @@ import config
 from base.base_crawler import AbstractCrawler
 from proxy.proxy_ip_pool import IpInfoModel, create_ip_pool
 from store import xhs as xhs_store
-from tools import utils
+from tools import utils, crawler_util
 from var import crawler_type_var
 
 from .client import XiaoHongShuClient
@@ -32,7 +32,7 @@ class XiaoHongShuCrawler(AbstractCrawler):
         super().__init__()
         print(self.id)
         self.index_url = "https://www.xiaohongshu.com"
-        self.user_agent = utils.get_user_agent()
+        self.user_agent = crawler_util.get_user_agent()
 
     def init_config(self, platform: str, login_type: str, crawler_type: str, start_page: int, keyword: str) -> None:
         self.platform = platform
@@ -71,16 +71,16 @@ class XiaoHongShuCrawler(AbstractCrawler):
 
             # Create a client to interact with the xiaohongshu website.
             self.xhs_client = await self.create_xhs_client(httpx_proxy_format)
-            if not await self.xhs_client.pong():
-                login_obj = XiaoHongShuLogin(
-                    login_type=self.login_type,
-                    login_phone="",  # input your phone number
-                    browser_context=self.browser_context,
-                    context_page=self.context_page,
-                    cookie_str=config.COOKIES
-                )
-                await login_obj.begin()
-                await self.xhs_client.update_cookies(browser_context=self.browser_context)
+            # if not await self.xhs_client.pong():
+            #     login_obj = XiaoHongShuLogin(
+            #         login_type=self.login_type,
+            #         login_phone="",  # input your phone number
+            #         browser_context=self.browser_context,
+            #         context_page=self.context_page,
+            #         cookie_str=config.COOKIES
+            #     )
+            #     await login_obj.begin()
+            #     await self.xhs_client.update_cookies(browser_context=self.browser_context)
 
             crawler_type_var.set(self.crawler_type)
             if self.crawler_type == "search":
@@ -238,7 +238,7 @@ class XiaoHongShuCrawler(AbstractCrawler):
     async def create_xhs_client(self, httpx_proxy: Optional[str]) -> XiaoHongShuClient:
         """Create xhs client"""
         utils.logger.info("[XiaoHongShuCrawler.create_xhs_client] Begin create xiaohongshu API client ...")
-        cookie_str, cookie_dict = utils.convert_cookies(await self.browser_context.cookies())
+        cookie_str, cookie_dict = crawler_util.convert_cookies(await self.browser_context.cookies())
         xhs_client_obj = XiaoHongShuClient(
             proxies=httpx_proxy,
             headers={

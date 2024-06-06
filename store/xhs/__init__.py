@@ -5,6 +5,7 @@
 from typing import List
 
 import config
+from tools import time_util
 
 from . import xhs_store_impl
 from .xhs_store_impl import *
@@ -62,7 +63,7 @@ async def update_xhs_note(note_item: Dict, id: str):
         "ip_location": note_item.get("ip_location", ""),
         "image_list": [base_image_url+img.get('url_pre').split('!')[-2].split('/')[-1] for img in image_list],
         "tag_list": ','.join([tag.get('name', '') for tag in tag_list if tag.get('type') == 'topic']),
-        "last_modify_ts": utils.get_current_timestamp(),
+        "last_modify_ts": time_util.get_current_timestamp(),
         "note_url": f"https://www.xiaohongshu.com/explore/{note_id}"
     }
     utils.logger.info(f"[store.xhs.update_xhs_note] xhs note: {local_db_item}")

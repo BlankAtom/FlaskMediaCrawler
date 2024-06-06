@@ -1,15 +1,13 @@
 import os
 import re
 from zipfile import ZipFile
-import requests
 
 import aiofiles
 from fastapi import logger
 from flask import Flask, jsonify, request, json, send_file, render_template, redirect, url_for, flash
-
+import requests
 import asyncio
 import config
-import db
 
 from main import CrawlerFactory
 from var import crawler_type_var
@@ -25,18 +23,10 @@ def home():
     return jsonify(message="Hello World")
 
 
-@app.route('/api/v1/crawler/xhs', methods=['GET'])
-def crawler(share_url='https://xhslink.com/tUiI5K'):
-    note_id = request.form.get('note_id', None)
-    # share_url = request.form.get('share_url', 'http://xhslink.com/tUiI5K')
-    if note_id is None:
-        response = requests.get(share_url, allow_redirects=False)
-        xhs = response.content.decode('utf-8')
-        # 第一个匹配项
-        matches = re.findall('xiaohongshu.com/discovery/item/(\w+)', xhs)
-        note_id = matches[0]
+# def process_input_param()
 
-    logger.logger.info('Crawler xhs: ' + share_url + ' ' + note_id)
+def get_crawler_image_urls(note_id=None):
+    logger.logger.info('Crawler xhs: ' + note_id)
     # print(note_id)
     # print(config.XHS_SPECIFIED_ID_LIST)
     config.XHS_SPECIFIED_ID_LIST = [note_id]
@@ -61,6 +51,38 @@ def crawler(share_url='https://xhslink.com/tUiI5K'):
         return jsonify(message="No data found")
 
     image_urls = objs[0]['image_list']
+
+    return image_urls
+
+
+@app.route('/api/v1/crawler/xhs/images', methods=['GET', 'POST'])
+def crawler_images_urls():
+    share_url = request.form.get('share_url', 'http://xhslink.com/tUiI5K')
+    if share_url is None:
+        logger.logger.info('输入空的表单参数：share_url')
+        return jsonify(message="请输入分享链接")
+    response = requests.get(share_url, allow_redirects=False)
+    xhs = response.content.decode('utf-8')
+    # 第一个匹配项
+    matches = re.findall('xiaohongshu.com/discovery/item/(\w+)', xhs)
+    note_id = matches[0]
+
+    image_urls = get_crawler_image_urls(note_id)
+    return image_urls
+
+
+@app.route('/api/v1/crawler/xhs', methods=['GET'])
+def crawler(share_url='https://xhslink.com/tUiI5K'):
+    note_id = request.form.get('note_id', None)
+    # share_url = request.form.get('share_url', 'http://xhslink.com/tUiI5K')
+    if note_id is None:
+        response = requests.get(share_url, allow_redirects=False)
+        xhs = response.content.decode('utf-8')
+        # 第一个匹配项
+        matches = re.findall('xiaohongshu.com/discovery/item/(\w+)', xhs)
+        note_id = matches[0]
+
+    image_urls = get_crawler_image_urls(note_id)
     # for img_route in objs[0]['image_list']:
 
     # 创建一个临时目录来存储下载的图片
@@ -107,6 +129,7 @@ def input_form():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    print('Start Flask Server')
+    app.run(host='0.0.0.0', debug=False, port=5000)
 
     # db.close()
