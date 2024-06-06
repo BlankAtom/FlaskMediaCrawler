@@ -56,7 +56,7 @@ jobs:
       with:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USERNAME }}
-        key: ${{ secrets.SERVER_SSH_KEY }}
+        password: ${{ secrets.SERVER_PASSWORD }}
         script: |
           docker pull rocaelfaller/private-flask-media-crawler:latest
           docker stop flaskapi || true
