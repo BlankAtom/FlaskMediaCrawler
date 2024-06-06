@@ -19,7 +19,6 @@ jobs:
 
     - name: Install dependencies
       run: |
-        echo Username: ${{ secrets.DOCKER_HUB_USERNAME }}
         python -m pip install --upgrade pip
         pip install opencv-python-headless
         pip install -r requirements.txt
@@ -35,13 +34,12 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     - name: Build and push Docker image
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v5
       with:
-        context: .
         push: true
         tags: rocaelfaller/private-flask-media-crawler:latest
 
@@ -55,7 +53,7 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
-          docker pull rocaelfaller/private-flaskapi:latest
+          docker pull rocaelfaller/private-flask-media-crawler:latest
           docker stop flaskapi || true
           docker rm flaskapi || true
-          docker run -d --name flaskapi -p 37000:5000 rocaelfaller/private-flaskapi:latest
+          docker run -d --name flaskapi -p 37000:5000 rocaelfaller/private-flask-media-crawler:latest
