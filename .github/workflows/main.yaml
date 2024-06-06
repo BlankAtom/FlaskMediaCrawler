@@ -38,6 +38,9 @@ jobs:
         push: true
         tags: rocaelfaller/private-flask-media-crawler:latest
 
+        secrets: |
+          GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
     - name: Deploy to personal server
       uses: appleboy/ssh-action@master
       with:
