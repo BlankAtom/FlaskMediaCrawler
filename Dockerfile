@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster
+FROM mcr.microsoft.com/playwright/python:v1.44.0-jammy
 LABEL authors="BlankAtomic"
 
 WORKDIR /app
