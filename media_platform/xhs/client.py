@@ -89,6 +89,8 @@ class XiaoHongShuClient(AbstractApiClient):
         if return_response:
             return response.text
 
+        utils.logger.info(f"[XiaoHongShuClient.request] {method} {url} {response.status_code}")
+        # response.
         data: Dict = response.json()
         if data["success"]:
             return data.get("data", data.get("success", {}))
