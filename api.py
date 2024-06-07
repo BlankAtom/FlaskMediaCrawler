@@ -74,10 +74,10 @@ def crawler_images_urls():
     return image_urls
 
 
-@app.route('/api/v1/crawler/xhs', methods=['GET'])
-def crawler(share_url='https://xhslink.com/tUiI5K'):
+@app.route('/api/v1/crawler/xhs', methods=['GET', 'POST'])
+def crawler():
     note_id = request.form.get('note_id', None)
-    # share_url = request.form.get('share_url', 'http://xhslink.com/tUiI5K')
+    share_url = request.form.get('share_url', 'http://xhslink.com/tUiI5K')
     if note_id is None:
         response = requests.get(share_url, allow_redirects=False)
         xhs = response.content.decode('utf-8')
