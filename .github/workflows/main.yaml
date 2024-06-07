@@ -8,8 +8,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/browserless/base:latest
 
     permissions:
       packages: write
@@ -24,9 +22,18 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.11
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
 
     - name: Install dependencies
       run: |
+        apt update
         python -m pip install --upgrade pip
         pip install opencv-python-headless
         pip install -r requirements.txt
