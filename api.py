@@ -5,6 +5,7 @@ import time
 from zipfile import ZipFile
 
 import aiofiles
+import cv2
 from fastapi import logger
 from flask import Flask, jsonify, request, json, send_file, render_template, redirect, url_for, flash
 import requests
@@ -93,19 +94,34 @@ def crawler():
 
     # 下载所有图片
     image_files = []
-    for i, url in enumerate(image_urls):
-        response = requests.get(url)
-        image_file = f'temp/{note_id}_image_{i}.jpg'
-        with open(image_file, 'wb') as f:
-            f.write(response.content)
-            image_files.append(image_file)
 
+    def process_image_url(_url: str, _i: int, _note_id: str):
+        _response = requests.get(_url)
+        image_file = f'temp/{_note_id}_image_{_i}_base.jpg'
+        image_file_out = f'temp/{_note_id}_image_{_i}.jpg'
+        with open(image_file, mode='wb') as f:
+            f.write(_response.content)
+
+        image_files.append(image_file_out)
+
+        imr = cv2.imread(image_file)
+        if cv2.imwrite(image_file_out, imr, [cv2.IMWRITE_JPEG_QUALITY, 70]):
+            os.remove(image_file)
+        else:
+            logger.logger.warn(f'Failed to write image file: {image_file_out}')
+
+    [process_image_url(url, i, note_id) for i, url in enumerate(image_urls)]
+
+    logger.logger.info("Start to create zip file")
     # 创建一个zip文件
     image_zip_file = f'temp/{note_id}_images.zip'
+    # command = ['pigz', '-c'] + image_files + ['>', image_zip_file]
+    # subprocess.run(command, shell=True)
     with ZipFile(image_zip_file, 'w') as zipf:
         for i in range(len(image_files)):
             zipf.write(image_files[i], arcname=os.path.basename(image_files[i]))
             # zipf.wr
+    logger.logger.info("Zip file created successfully")
     # print()
     # 返回zip文件
     return send_file(image_zip_file, as_attachment=True)
